@@ -28,10 +28,20 @@ while($lease = $leases->nextActive()){
 		@$clients[$lease["mac"]] = $client;
 }
 
+foreach($clients as $client_id => $client){
+	$output = shell_exec('ping -c1 -W1 '.$client["ip"]);
+	preg_match('/time=([\.0-9]+)/', $output, $m);
+	if(empty($m)) {
+		$clients[$client_id]["ping"] = 0;
+	} else {
+		$clients[$client_id]["ping"] = $m[1];
+	}
+}
+
 if ($is_curl) {
 	echo "\x1b[1m ETF DHCP\x1b[0m\n\n";
 	echo " ".date('r')."\n\n";
-	echo "\x1b[1m   IP\t\t\tMAC\t\t\tHost\t\t\tStart\t\t\tEnd\n";
+	echo "\x1b[1m   IP\t\t\tPING\t\tMAC\t\t\tHost\t\t\tStart\t\t\tEnd\n";
 	echo "\x1b[0m";
 
 	foreach($clients as $client){
@@ -42,6 +52,7 @@ if ($is_curl) {
 		}
 		
 		echo str_pad($client["ip"],16," ")."\t".
+			str_pad(empty($client["ping"]) ? ("down") : ($client["ping"]." ms"),12," ")."\t".
 			str_pad($client["mac"],17," ")."\t".
 			str_pad($client["name"],16," ")."\t";
 		if(isset($client["starts"]) and $client["starts"] != 0)
@@ -81,14 +92,23 @@ if ($is_curl) {
 		<?php
 		foreach($clients as $client){
 			echo "<tr";
-		
 			if($client["ip"] == $_SERVER["REMOTE_ADDR"])
 			{
 				echo ' class="bg-info"';
 			}
-			echo "><td>".$client["ip"]."</td>".
-				"<td><span class=\"ping\" data-ip=\"".substr($client["ip"],11)."\">...</span></td>".
-				"<td>".$client["mac"]."</td>".
+			echo "><td>".$client["ip"]."</td>";
+
+			if(empty($client["ping"])) {
+			        echo "<td><span class=\"badge bg-danger\">down</span></td>";
+			} else {
+			        if ((float)$client["ping"] > 10) {
+			                echo "<td><span class=\"badge bg-warning\">".$client["ping"]."</span></td>";
+			        } else {
+			                echo "<td><span class=\"badge bg-success\">".$client["ping"]."</span></td>";
+			        }
+			}
+
+			echo "<td>".$client["mac"]."</td>".
 				"<td>".$client["name"]."</td>";
 			if(isset($client["starts"]) and $client["starts"] != 0)
 			{
@@ -102,7 +122,6 @@ if ($is_curl) {
 		</table>
 		</div>
 		<p><b>protip:</b> you can also use <code>curl dhcp.etf.nu</code> in your terminal.</p>
-		<script>function ping(){$(this).load("/ping.php?ip="+$(this).data("ip"));}$(".ping").each(ping);</script>
 	</div>
 </body>
 </html>
