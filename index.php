@@ -8,13 +8,14 @@ $is_curl = strpos($_SERVER['HTTP_USER_AGENT'], "curl") !== false;
 $clients = Array();
 $clients[] = array("ip" => "192.168.10.1", "mac" => "", "name" => "Allspark");
 $clients[] = array("ip" => "192.168.10.3", "mac" => "00:01:E7:DD:20:01", "name" => "HPSwitch");
-$clients[] = array("ip" => "192.168.10.81", "mac" => "82:CF:B4:01:52:AA", "name" => "Kiosk");
 $clients[] = array("ip" => "192.168.10.200", "mac" => "00:01:E6:A5:BF:2C", "name" => "LaserJet4200");
 $clients[] = array("ip" => "192.168.10.201", "mac" => "00:40:8C:B9:2E:FA", "name" => "AxisPTZ");
 $clients[] = array("ip" => "192.168.10.202", "mac" => "00:40:8C:C5:BF:3B", "name" => "AxisMek");
 $clients[] = array("ip" => "192.168.10.203", "mac" => "00:40:8C:46:AC:F1", "name" => "Axis2100");
 $clients[] = array("ip" => "192.168.10.205", "mac" => "00:40:8C:99:49:76", "name" => "AxisSales");
 $clients[] = array("ip" => "192.168.10.206", "mac" => "00:80:64:5C:C5:91", "name" => "MrCoffee");
+$clients[] = array("ip" => "192.168.10.210", "mac" => "82:CF:B4:01:52:AA", "name" => "Kiosk");
+$clients[] = array("ip" => "192.168.10.222", "mac" => "BC:5F:F4:5A:A1:7B", "name" => "DESKTOP-RDP");
 
 while($lease = $leases->nextActive()){
 		$client = Array();
